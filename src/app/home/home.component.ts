@@ -1,57 +1,41 @@
-import { Component, inject } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HousingLocationComponent } from "../housing-location/housing-location.component";
 import { HousingLocation } from "../housing-location";
-import { HousingService } from "../housing.service";
+import { RouterModule } from "@angular/router";
+import { Router } from "@angular/router";
+import { JwtService } from "../jwt.service";
 
 @Component({
   selector: "app-home",
   standalone: true,
-  imports: [CommonModule, HousingLocationComponent],
+  imports: [CommonModule, RouterModule],
   template: `
-    <section>
-      <form>
-        <input type="text" placeholder="Enter your name" #filter />
-        <button
-          class="primary"
-          type="button"
-          (click)="filterResults(filter.value)"
-        >
-          Submit
-        </button>
-      </form>
+    <section class="listing">
+      <h2 class="listing-heading">HI</h2>
+      <a [routerLink]="['/pdf-generator']" class="listing-link"
+        >PDF Generator</a
+      >
     </section>
-    <section class="results">
-      <app-housing-location
-        *ngFor="let housingLocation of filteredLocationList"
-        [housingLocation]="housingLocation"
-      ></app-housing-location>
+    <section>
+      <button class="primary" type="button" (click)="logout()">Logout</button>
     </section>
   `,
   styleUrls: ["./home.component.css"],
 })
 export class HomeComponent {
-  housingLocationList: HousingLocation[] = [];
-  housingService: HousingService = inject(HousingService);
-  filteredLocationList: HousingLocation[] = [];
-
-  constructor() {
-    this.housingService
-      .getAllHousingLocations()
-      .then((locations: HousingLocation[]) => {
-        this.housingLocationList = locations;
-        this.filteredLocationList = locations;
-      });
-  }
-
-  filterResults(filter: string): void {
-    if (!filter) {
-      this.filteredLocationList = this.housingLocationList;
+  constructor(
+    private readonly router: Router,
+    private readonly jwtService: JwtService
+  ) {
+    if (jwtService.getToken() === null) {
+      //TODO: check token expiration
+      void this.router.navigate(["/login"]);
       return;
     }
+  }
 
-    this.filteredLocationList = this.housingLocationList.filter((location) =>
-      location.city.toLowerCase().includes(filter.toLowerCase())
-    );
+  logout(): void {
+    this.jwtService.destroyToken();
+    void this.router.navigate(["/login"]);
   }
 }

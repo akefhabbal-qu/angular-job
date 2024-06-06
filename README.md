@@ -1,4 +1,5 @@
 # Angular Homes App
+
 - Install Angular if you don't have it installed
 
   `npm install -g @angular/cli`
@@ -13,8 +14,14 @@
 
 - Install the depencies
 
-  `npm install` 
+  `npm install`
 
-- Run the application 
+- Run the application
 
   `ng serve`
+
+  Resources Used
+  https://github.com/gothinkster/angular-realworld-example-app/tree/main
+  https://www.youtube.com/playlist?list=PL1w1q3fL4pmj9k1FrJ3Pe91EPub2_h4jF
+  https://code.visualstudio.com/docs/copilot/overview
+  https://medium.com/@rijuldahiya/exporting-json-data-to-pdf-in-angular-using-pdfmake-aef64dbd1606

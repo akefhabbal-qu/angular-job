@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
-import { HomeComponent } from "./home/home.component";
 import { RouterModule } from "@angular/router";
+import { HomeComponent } from "./home/home.component";
 
 @Component({
   standalone: true,
@@ -9,7 +9,7 @@ import { RouterModule } from "@angular/router";
     <header class="brand-name">
       <img
         class="brand-logo"
-        src="assets/logo.svg"
+        src="assets/logo.jpg"
         alt="Al Attiyah Logo"
         aria-hidden="true"
       />

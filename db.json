@@ -1,4 +1,7 @@
 {
+  "login": {
+    "token": "admin"
+  },
   "locations": [
     {
       "id": 0,

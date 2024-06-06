@@ -1,6 +1,7 @@
 import { Routes } from "@angular/router";
+import { LoginComponent as LoginComponent } from "./login/login.component";
+import { POGeneratorComponent as POGeneratorComponent } from "./po-generator/po-generator.component";
 import { HomeComponent } from "./home/home.component";
-import { DetailsComponent } from "./details/details.component";
 
 const routeConfig: Routes = [
   {
@@ -9,9 +10,14 @@ const routeConfig: Routes = [
     title: "Home Page",
   },
   {
-    path: "details/:id",
-    component: DetailsComponent,
-    title: "Details Page",
+    path: "login",
+    component: LoginComponent,
+    title: "Login Page",
+  },
+  {
+    path: "pdf-generator",
+    component: POGeneratorComponent,
+    title: "PDF Generator Page",
   },
 ];
 

@@ -24,4 +24,21 @@ export class HousingService {
   submitApplication(firstName: string, lastName: string, email: string): void {
     console.log("Application submitted", { firstName, lastName, email });
   }
+
+  async login(email: string, password: string): Promise<string> {
+    const data = await fetch("http://localhost:3000/login", {
+      method: "GET",
+      // body: JSON.stringify({ email, password }),
+      // headers: {
+      //   "Content-Type": "application/json",
+      // },
+    });
+
+    const response = await data.json();
+    if (response.error) {
+      return response.error;
+    }
+
+    return response.token;
+  }
 }
