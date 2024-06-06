@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { HousingLocation } from "../housing-location";
+import { MaterialsData } from "../materials";
 import { RouterModule } from "@angular/router";
 import { Router } from "@angular/router";
 import { JwtService } from "../jwt.service";

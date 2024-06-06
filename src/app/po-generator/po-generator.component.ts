@@ -1,8 +1,14 @@
-import { Component, inject } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  ViewChild,
+  inject,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
-import { HousingService } from "../housing.service";
-import { HousingLocation } from "../housing-location";
+import { POService } from "../po.service";
+import { MaterialsData } from "../materials";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import * as pdfMake from "pdfmake/build/pdfmake";
@@ -37,18 +43,18 @@ import {
                 <th>Price</th>
               </tr>
             </thead>
-            <tbody>
-              <tr>
-                <td><input type="checkbox" /></td>
-                <td>Concrete</td>
-                <td>6000 QR</td>
+            <tbody #tbodyRef>
+              <tr *ngFor="let material of materials">
+                <td>
+                  <input
+                    class="materialSelect"
+                    type="checkbox"
+                    id="{{ material.id }}"
+                  />
+                </td>
+                <td>{{ material.name }}</td>
+                <td>{{ material.price }} {{ material.unit_sign }}</td>
               </tr>
-              <tr class="active-row">
-                <td><input type="checkbox" /></td>
-                <td>Sand</td>
-                <td>5150 QR</td>
-              </tr>
-              <!-- and so on... -->
             </tbody>
           </table>
         </div>
@@ -63,68 +69,44 @@ import {
 })
 export class POGeneratorComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
-  housingService: HousingService = inject(HousingService);
-  housingLocation: HousingLocation | undefined;
-  applyForm = new FormGroup({
-    firstName: new FormControl(""),
-    lastName: new FormControl(""),
-    email: new FormControl(""),
-  });
+  poService: POService = inject(POService);
+  materials: MaterialsData[] = [];
+
+  @ViewChild("tbodyRef") tbody!: ElementRef<HTMLTableSectionElement>;
 
   constructor() {
-    const housingLocationId = Number(this.route.snapshot.params["id"]);
-    this.housingService
-      .getHousingLocationById(housingLocationId)
-      .then((location) => {
-        this.housingLocation = location;
-      });
-  }
-
-  submitApplication() {
-    this.housingService.submitApplication(
-      this.applyForm.value.firstName ?? "",
-      this.applyForm.value.lastName ?? "",
-      this.applyForm.value.email ?? ""
-    );
+    this.poService.getAllMaterials().then((materials: MaterialsData[]) => {
+      this.materials = materials;
+    });
   }
 
   generatePdf() {
-    const data = [
-      ["Name", "Email", "Country"],
-      ["John Doe", "johndoe@example.com", "USA"],
-      ["Jane Smith", "janesmith@example.com", "Canada"],
-      ["Bob Johnson", "bobjohnson@example.com", "UK"],
-    ];
+    const selectedMaterials: MaterialsData[] = [];
 
-    const docDefinition: TDocumentDefinitions = {
-      content: [
-        { text: "User Data", style: "header" },
-        { table: { body: data } },
-      ],
-      // styles: {
-      //   header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] },
-      // },
-      footer: function (currentPage, pageCount) {
-        return currentPage.toString() + " of " + pageCount;
-      },
-      header: function (currentPage, pageCount, pageSize) {
-        // you can apply any logic and return any valid pdfmake element
+    this.tbody.nativeElement.childNodes.forEach((tr: any) => {
+      console.log(tr);
 
-        return [
-          {
-            text: "simple text",
-            alignment: currentPage % 2 ? "left" : "right",
-          },
-          {
-            canvas: [
-              { type: "rect", x: 170, y: 32, w: pageSize.width - 170, h: 40 },
-            ],
-          },
-        ];
-      },
-    };
+      // TODO: here here here
+      const checkbox = tr.querySelector("input[type=checkbox]");
+      if (checkbox.checked) {
+        const id = parseInt(checkbox.id);
+        const material = this.materials.find((m) => m.id === id);
+        if (material) {
+          selectedMaterials.push(material);
+        }
+      }
+    });
 
-    var html = htmlToPdfmake(
+    const data = selectedMaterials.forEach((material) => {
+      return `
+        <tr class="trs">
+          <td>${material.name}</td>
+          <td>${material.price} ${material.unit_sign}</td>
+        </tr>
+      `;
+    });
+
+    const html = htmlToPdfmake(
       `
       <div>
         <header>
@@ -134,20 +116,13 @@ export class POGeneratorComponent {
         </header>
         <table class="fTable">
           <thead class="tThead">
-              <tr class="trs">
-                  <th class="thds">Name</th>
-                  <th class="thds">Price</th>
-              </tr>
+            <tr class="trs">
+              <th class="thds">Name</th>
+              <th class="thds">Price</th>
+            </tr>
           </thead>
           <tbody>
-              <tr class="trs">
-                  <td class="thds">Concrete</td>
-                  <td class="thds">6000 QR</td>
-              </tr>
-              <tr class="active-row">
-                  <td class="thds">Sand</td>
-                  <td class="thds">5150 QR</td>
-              </tr>
+           ${data}
           </tbody>
         </table>
       </div>
@@ -156,8 +131,6 @@ export class POGeneratorComponent {
 
     const styles: StyleDictionary = {
       tThead: {
-        // background: "#009879",
-        // color: "#ffffff",
         alignment: "left",
       },
       title: {

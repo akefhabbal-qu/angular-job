@@ -1,7 +1,7 @@
 import { Component, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { HomeComponent } from "../home/home.component";
-import { HousingService } from "../housing.service";
+import { POService } from "../po.service";
 import { Router, RouterModule } from "@angular/router";
 import { JwtService } from "../jwt.service";
 
@@ -29,7 +29,7 @@ import { JwtService } from "../jwt.service";
   styleUrls: ["./login.component.css"],
 })
 export class LoginComponent {
-  housingService: HousingService = inject(HousingService);
+  housingService: POService = inject(POService);
 
   constructor(
     private readonly router: Router,
