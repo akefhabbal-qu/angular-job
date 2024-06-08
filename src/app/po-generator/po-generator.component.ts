@@ -1,24 +1,16 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  ViewChild,
-  inject,
-} from "@angular/core";
+import { Component, ElementRef, ViewChild, inject } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { POService } from "../po.service";
 import { MaterialsData } from "../materials";
-import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import * as pdfFonts from "pdfmake/build/vfs_fonts";
 import * as pdfMake from "pdfmake/build/pdfmake";
-// import * as htmlToPdfmake from "html-to-pdfmake";
+import { StyleDictionary, TDocumentDefinitions } from "pdfmake/interfaces";
+import { Authentication, Credentials } from "../auth.service";
+import { UserData } from "../userdata";
+import { JwtService } from "../jwt.service";
 var htmlToPdfmake = require("html-to-pdfmake");
-import {
-  Style,
-  StyleDictionary,
-  TDocumentDefinitions,
-} from "pdfmake/interfaces";
 
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
@@ -32,8 +24,8 @@ import {
         <div>
           <header>
             <h1>Purchase Order #1001</h1>
-            <p>Created by: Ahmad Hussein</p>
-            <p>Issued at: 10/05/2024</p>
+            <p>Created by: {{ userData.name }}</p>
+            <p>Issued at: {{ today | date : "fullDate" }}</p>
           </header>
           <table class="styled-table">
             <thead>
@@ -71,25 +63,37 @@ export class POGeneratorComponent {
   route: ActivatedRoute = inject(ActivatedRoute);
   poService: POService = inject(POService);
   materials: MaterialsData[] = [];
+  auth: Authentication = inject(Authentication);
+  userData: UserData = {} as UserData;
+  today = new Date();
 
   @ViewChild("tbodyRef") tbody!: ElementRef<HTMLTableSectionElement>;
 
-  constructor() {
-    this.poService.getAllMaterials().then((materials: MaterialsData[]) => {
-      this.materials = materials;
-    });
+  constructor(private readonly jwtService: JwtService) {
+    this.poService
+      .getAllMaterials(jwtService.getToken())
+      .then((materials: MaterialsData[]) => {
+        this.materials = materials;
+      });
+
+    this.poService
+      .getUserData(this.auth.getCredentials().username)
+      .then((data) => {
+        this.userData = data;
+      });
   }
 
   generatePdf() {
     const selectedMaterials: MaterialsData[] = [];
 
-    this.tbody.nativeElement.childNodes.forEach((tr: any) => {
-      console.log(tr);
+    this.tbody.nativeElement.childNodes.forEach((trs: any) => {
+      const tds = trs.childNodes;
 
-      // TODO: here here here
-      const checkbox = tr.querySelector("input[type=checkbox]");
+      if (tds.length === 0) return;
+
+      const checkbox = tds[0].firstChild as HTMLInputElement;
       if (checkbox.checked) {
-        const id = parseInt(checkbox.id);
+        const id: string = checkbox.id;
         const material = this.materials.find((m) => m.id === id);
         if (material) {
           selectedMaterials.push(material);
@@ -97,8 +101,11 @@ export class POGeneratorComponent {
       }
     });
 
-    const data = selectedMaterials.forEach((material) => {
-      return `
+    let data = "";
+    selectedMaterials.forEach((material) => {
+      data =
+        data +
+        `
         <tr class="trs">
           <td>${material.name}</td>
           <td>${material.price} ${material.unit_sign}</td>
@@ -111,8 +118,8 @@ export class POGeneratorComponent {
       <div>
         <header>
           <h1>Purchase Order #1001</h1>
-          <p>Created by: Ahmad Hussein</p>
-          <p>Issued at: 10/05/2024</p>
+          <p>Created by: ${this.userData.name}</p>
+          <p>Issued at: ${this.today}</p>
         </header>
         <table class="fTable">
           <thead class="tThead">

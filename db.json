@@ -1,63 +1,94 @@
 {
-  "login": {
-    "token": "admin"
+  "user": {
+    "response_status": "success",
+    "response_code": 200,
+    "error_type": "None",
+    "stack_trace": "None",
+    "timestamp": "LocalDateTime",
+    "data": {
+      "id": "1",
+      "name": "Akef Habbal",
+      "email": "akef.habbal@gmail.com"
+    },
+    "success": true
   },
-  "materials": [
-    {
-      "id": 0,
-      "name": "Concrete",
-      "price": 4,
-      "unit": "Qatari Riyal",
-      "unit_sign": "QR"
+  "login": {
+    "response_status": "success",
+    "response_code": 200,
+    "error_type": "None",
+    "stack_trace": "None",
+    "timestamp": "LocalDateTime",
+    "data": {
+      "token": "admin"
     },
-    {
-      "id": 1,
-      "name": "Woods",
-      "price": 0,
-      "unit": "Dollar",
-      "unit_sign": "$"
+    "success": true
+  },
+  "materials": {
+    "response_status": "success",
+    "response_code": 200,
+    "error_type": "None",
+    "stack_trace": "None",
+    "timestamp": "LocalDateTime",
+    "data": {
+      "materials": [
+        {
+          "id": "0",
+          "name": "Concrete",
+          "price": 4,
+          "unit": "Qatari Riyal",
+          "unit_sign": "QR"
+        },
+        {
+          "id": "1",
+          "name": "Woods",
+          "price": 10,
+          "unit": "Dollar",
+          "unit_sign": "$"
+        },
+        {
+          "id": "2",
+          "name": "Iron",
+          "price": 1,
+          "unit": "Yen",
+          "unit_sign": "¥"
+        },
+        {
+          "id": "3",
+          "name": "Blocks",
+          "price": 1,
+          "unit": "Dollar",
+          "unit_sign": "$"
+        },
+        {
+          "id": "4",
+          "name": "Roofs",
+          "price": 1,
+          "unit": "Dollar",
+          "unit_sign": "$"
+        },
+        {
+          "id": "5",
+          "name": "Floors",
+          "price": 2,
+          "unit": "Qatari Riyal",
+          "unit_sign": "QR"
+        },
+        {
+          "id": "6",
+          "name": "Screws",
+          "price": 5,
+          "unit": "Qatari Riyal",
+          "unit_sign": "QR"
+        },
+        {
+          "id": "7",
+          "name": "Wires",
+          "price": 2,
+          "unit": "Pound",
+          "unit_sign": "£"
+        }
+      ]
     },
-    {
-      "id": 2,
-      "name": "Iron",
-      "price": 1,
-      "unit": "Yen",
-      "unit_sign": "¥"
-    },
-    {
-      "id": 3,
-      "name": "Blocks",
-      "price": 1,
-      "unit": "Dollar",
-      "unit_sign": "$"
-    },
-    {
-      "id": 4,
-      "name": "Roofs",
-      "price": 1,
-      "unit": "Dollar",
-      "unit_sign": "$"
-    },
-    {
-      "id": 5,
-      "name": "Floors",
-      "price": 2,
-      "unit": "Qatari Riyal",
-      "unit_sign": "QR"
-    },
-    {
-      "id": 6,
-      "name": "Screws",
-      "price": 5,
-      "unit": "Qatari Riyal",
-      "unit_sign": "QR"
-    },
-    {
-      "id": 7,
-      "name": "Wires",
-      "price": 2,
-      "unit": "Pound",
-      "unit_sign": "£"
-    }
-  ]
+    "success": true
+  }
 }

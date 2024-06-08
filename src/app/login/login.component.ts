@@ -4,6 +4,7 @@ import { HomeComponent } from "../home/home.component";
 import { POService } from "../po.service";
 import { Router, RouterModule } from "@angular/router";
 import { JwtService } from "../jwt.service";
+import { Authentication, Credentials } from "../auth.service";
 
 @Component({
   selector: "app-login",
@@ -29,11 +30,12 @@ import { JwtService } from "../jwt.service";
   styleUrls: ["./login.component.css"],
 })
 export class LoginComponent {
-  housingService: POService = inject(POService);
+  poService: POService = inject(POService);
 
   constructor(
     private readonly router: Router,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly creds: Authentication
   ) {}
 
   loginClicked(email: string, password: string): void {
@@ -41,10 +43,9 @@ export class LoginComponent {
       return;
     }
 
-    this.housingService.login(email, password).then((token) => {
+    this.poService.login(email, password).then((token) => {
       if (token) {
-        console.log("Login successful");
-        console.log("Token:", token);
+        this.creds.saveCredentials({ username: email, password });
         this.jwtService.saveToken(token);
         void this.router.navigate(["/"]);
       } else {
